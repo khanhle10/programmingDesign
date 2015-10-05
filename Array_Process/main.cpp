@@ -1,45 +1,76 @@
 /* 
  * File:   main.cpp
  * Author: khanh
- *
- * Created on October 3, 2015, 2:56 PM
+ *Problem 3:
+ * The array of a(1..n) contains arbitrary integers. Write a function
+ * reduce(a, n) that reduces the array a(1..n) by eliminating it all
+ * values that are equal to three largest different integers. For example,
+ * if a = (9,1,1,6,7,1,2,3,3,5,6,6,6,6,7,9) then largest different integers are
+ * 6,7,9 and after reduction the reduced array will be a=(1,1,1, 
  */
 
 #include <cstdlib>
-#define CHAR_BIT 8;
+#include <iostream>
+
 using namespace std;
-void reduce(int *array, int *n);
-void sort(int *value, int *value2, int *value3);
-void print(int *array, int *n);
-void min(int *value, int *value2, int *value3);
+
+int* reduce(int *array, int size, int large, int mid, int small, int count);
+void print(int array[], int n);
+void findLargeValues(int &large, int &mid, int &small, int value, int &count);
 /*
  * 
  */
 int main() {
-    int *array = {9,1,1,6,7,1,2,3,3,5,6,6,6,6,7,9}, *size = 16;
-    reduce(&array, &size);
-    print(&array, &size);
+    int array[16] = {9,1,1,6,7,1,2,3,3,5,6,6,6,6,7,9};
+    int large = 0, mid = 0, small = 0, size = 16, count = 0;
+    int i = 0;
+    for(i = 1; i < size; i++)
+      findLargeValues(large, mid, small, array[i], count);
+    cout << "The Three Largest Values: "<< large << " " <<
+            mid << " " << small << endl;
+    int *newArray = reduce(array, count, large, mid, small, size);
+     
+    for(i = 0; i < count; i++)
+        cout << newArray[i] << " ";
+    //print(newArray, count);
     return 0;
 }
-// 911/6
-void reduce(int *array, int *size)
+/*
+ Pass: Array of data type int, along with three large variables, and size of array
+ * with new size of array.
+ * Return: the new array. 
+ */
+int* reduce(int *array, int count, int large, int mid, int small, int size)
 {
-  int *max_value = *array,*max_value2 = *array[1],*max_value3 = *array[2],i = 0;
-  sort(&array, *size);
-  for(i = 3; i < *size; i++)
-    (*max_value < *array[i])? *max_value = *array[i], i++:i++ ;
+    int *tempArray = new int[count], i = 0, tempCount = 0;
+    while( i < size )
+    {
+      if((array[i] != large) && (array[i] != mid) && (array[i] != small))
+      {
+          tempArray[tempCount] = array[i],tempCount++;
+      }
+      i++;
+    }
+    for(i = 0; i < count; i++)
+        //cout << tempArray[i] <<" ";
+    return tempArray;
     
 }
-// 1 2 3 / 2 3 1 
-void min(int *value, int *value2, int *value3)
+
+/* Pass in large, medium, small variables of data type int
+   Program: compare passed in variable with the three suggested values.
+ * the returned variables 
+ */
+void findLargeValues(int &large, int &mid, int &small, int value, int &count)
 {
-   int temp = 0;
-   if((value < value2) && (value < value3))
-   {
-       cout << "Nothing Change" << endl;
-   }else if(value2 > value3) 
-   {
-       temp = value3, value = value3, value3 = temp;
-   }else
-       temp = value3, value3 = value, value = temp;   
+    if(value > large)
+    { 
+        small = mid, mid = large, large = value, count++;
+    }else if ((value > mid) && (value < large))
+    {
+        small = mid, mid = value, count++;  
+    }else if ((value < mid) && (value > small))
+    { 
+        small = value, count++;
+    }
 }
